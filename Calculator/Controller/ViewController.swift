@@ -3,25 +3,27 @@ import UIKit
 class ViewController: UIViewController {
 	@IBOutlet weak var displayLabel: UILabel!
 	private var isFinishedTyping = true
-	
+	private var displayValue: Double {
+		get {
+			guard let doubleNumber = Double(displayLabel.text!) else {
+				fatalError("Error converting displayLabel to double")
+			}
+			return doubleNumber
+		}
+		set {
+			displayLabel.text = String(newValue)
+		}
+	}
 	
 	@IBAction func calcButtonPressed(_ sender: UIButton) {
 		//What should happen when a non-number button is pressed
 		isFinishedTyping = true
-		guard let number = Double(displayLabel.text!) else {
-			fatalError("Error converting displayLabel to double")
-		}
 		if let calcMethod = sender.currentTitle {
-			switch calcMethod {
-			case "+/-":
-				displayLabel.text = String(number * -1)
-			case "AC":
-				displayLabel.text = "0"
-			case "%":
-				displayLabel.text = String(number * 0.01)
-			default:
-				break
+			let calculator = Calculator(number: displayValue)
+			guard let result = calculator.calculate(calcMethod: calcMethod) else {
+				fatalError("The result of the calculation with \(calcMethod) is nil")
 			}
+			displayValue = result
 		}
 	}
 	
@@ -35,10 +37,7 @@ class ViewController: UIViewController {
 			} else {
 				switch numValue {
 				case ".":
-					guard let doubleNum = Double(displayLabel.text!) else {
-						fatalError("Cannot convert displayLabel to Double")
-					}
-					let isInt = floor(doubleNum) == doubleNum
+					let isInt = floor(displayValue) == displayValue
 					if !isInt {return}
 				default:
 					break
