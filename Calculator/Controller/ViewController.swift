@@ -2,6 +2,7 @@ import UIKit
 
 class ViewController: UIViewController {
 	@IBOutlet weak var displayLabel: UILabel!
+	private var calculator = Calculator()
 	private var isFinishedTyping = true
 	private var displayValue: Double {
 		get {
@@ -11,19 +12,18 @@ class ViewController: UIViewController {
 			return doubleNumber
 		}
 		set {
-			displayLabel.text = String(newValue)
+			displayLabel.text = String(format: "%g", newValue)
 		}
 	}
 	
 	@IBAction func calcButtonPressed(_ sender: UIButton) {
 		//What should happen when a non-number button is pressed
 		isFinishedTyping = true
+		calculator.setNumber(displayValue)
 		if let calcMethod = sender.currentTitle {
-			let calculator = Calculator(number: displayValue)
-			guard let result = calculator.calculate(calcMethod: calcMethod) else {
-				fatalError("The result of the calculation with \(calcMethod) is nil")
+			if let result = calculator.calculate(calcMethod: calcMethod) {
+				displayValue = result
 			}
-			displayValue = result
 		}
 	}
 	
@@ -47,4 +47,3 @@ class ViewController: UIViewController {
 		}
 	}
 }
-
